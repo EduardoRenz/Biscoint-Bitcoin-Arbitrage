@@ -10,7 +10,7 @@ logging.getLogger().addHandler(logging.StreamHandler()) # Habilita para printar 
 
 # Constants
 BASE_URL="https://api.biscoint.io/v1"
-AMOUNT = '0.00001'
+AMOUNT = '0.0001'
 MIN_PERCENT_REQUIRED = 0.2
 API_KEY = os.getenv('API_KEY') 
 API_SECRET= os.getenv('API_SECRET') 
