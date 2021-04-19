@@ -14,7 +14,7 @@ sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxReques
 initial_balance = bsc.get_balance()
 last_balance = initial_balance
 logging.info(f"Initial balance: {initial_balance}",)
-percent_record = -1000
+percent_record = -1
 
 # Arbitrage Cycle
 while True:
@@ -23,7 +23,7 @@ while True:
     sell = bsc.get_offer(op='sell',amount=AMOUNT,isQuote=False)
 
     calculated_percent = percent(buy['efPrice'],sell['efPrice'])
-    print(f"Percent is {calculated_percent}")
+    logging.debug(f"Percent is {calculated_percent}")
 
     if calculated_percent > percent_record:
         logging.info(f"Percent Record Reached!! : {calculated_percent}")
@@ -33,8 +33,8 @@ while True:
         logging.info(f"Arbitrage oportunity: buy:{buy['efPrice']}   sell:{sell['efPrice']}")
         playsound('beep.wav')
         #Execute orders
-        executed_sell = bsc.confirm_offer(sell['offerId'])
         executed_buy = bsc.confirm_offer(buy['offerId'])
+        executed_sell = bsc.confirm_offer(sell['offerId'])
         last_balance = bsc.get_balance()
         logging.info(f"New Balance is: {last_balance}")
         break
