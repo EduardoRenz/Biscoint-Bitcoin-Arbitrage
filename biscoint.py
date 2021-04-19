@@ -8,6 +8,10 @@ def get_rate_limit():
     response = requests.get(f'{BASE_URL}/meta').json()
     return response['data']['endpoints']['offer']['post']['rateLimit']
 
+def get_ticker():
+    response = requests.get(f'{BASE_URL}/ticker?base=BTC&quote=BRL').json()
+    return response
+
 def get_balance():
     headers = utils.headers('balance')
     response = requests.post(f'{BASE_URL}/balance', headers=headers).json()
