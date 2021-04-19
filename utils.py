@@ -20,11 +20,9 @@ def sign(endpoint:str,nonce:int,data:str=''):
 # Generate a headers
 def headers(endpoint:str,data:str=''):
     nonce_now = nonce()
-    incrementer+=1
-    print(incrementer)
     return {
         "Content-Type": "application/json",
-        "BSCNT-NONCE": nonce_now,
+        "BSCNT-NONCE": str(nonce_now),
         "BSCNT-APIKEY": API_KEY,
         "BSCNT-SIGN": sign(endpoint,nonce_now,data),
     }
