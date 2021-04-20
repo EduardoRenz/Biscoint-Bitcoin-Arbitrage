@@ -10,7 +10,7 @@ def get_rate_limit():
 
 def get_ticker():
     response = requests.get(f'{BASE_URL}/ticker?base=BTC&quote=BRL').json()
-    return response
+    return response['data']
 
 def get_balance():
     headers = utils.headers('balance')
