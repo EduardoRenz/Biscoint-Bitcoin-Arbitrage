@@ -39,6 +39,11 @@ def waitForNextCycle(calculated_percent):
         time.sleep(sleep_time_offers)
     else:
         time.sleep(2)
+        
+# Log the current cycle every n times on loop
+def showCycle(cycle_count, percent, at_every:int=20):
+    if cycle_count % at_every == 0:
+        logging.info(f"Cycle {cycle_count} | Last percent : {percent} |")
 
 while True:
     try:
@@ -48,8 +53,9 @@ while True:
         sell = bsc.get_offer(op='sell',amount=str(amount_btc_to_trade),isQuote=False)
         # Calculate if arbitrage is possible
         calculated_percent = percent(buy['efPrice'],sell['efPrice'])
-        logging.info(f"Percent is {calculated_percent} | Cycle {cycle_count}")
 
+        showCycle(cycle_count,calculated_percent)
+        
         if calculated_percent > percent_record:
             logging.info(f"Percent Record Reached!! : {calculated_percent}")
             percent_record = calculated_percent
@@ -76,4 +82,3 @@ while True:
         waitForNextCycle(calculated_percent)
     except Exception as e:
         logging.error(e)
-        print(e)
