@@ -4,7 +4,7 @@ from biscoint_api_python import Biscoint
 from playsound import playsound
 from utils import percent,btcToTrade
 from configs import logging
-from configs import API_KEY, API_SECRET, AMOUNT, MIN_PERCENT_REQUIRED, BASE_URL, BRL_AMOUNT_TRADE
+from configs import API_KEY, API_SECRET, AMOUNT, MIN_PERCENT_REQUIRED, BASE_URL, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE
 
 # Initial configs
 bsc = Biscoint(API_KEY, API_SECRET)
@@ -24,6 +24,22 @@ percent_record = -1 # Will refresh every time when a new positive spread is achi
 logging.info(f"Initial balance: {initial_balance}",)
 # Arbitrage Cycle
 cycle_count = 1
+
+def updateTick(cycle_count):
+    if cycle_count % UPDATE_TICK_RATE == 0:
+        try:
+            ticker = bsc.get_ticker()
+            amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
+        except Exception as e:
+            logging.error(f"Error on updating tick {e}")
+
+# if spread is high, sleep, else speed up checks
+def waitForNextCycle(calculated_percent):
+    if calculated_percent < -0.3:
+        time.sleep(sleep_time_offers)
+    else:
+        time.sleep(2)
+
 while True:
     try:
         start_time = dt.now()
@@ -38,7 +54,7 @@ while True:
             logging.info(f"Percent Record Reached!! : {calculated_percent}")
             percent_record = calculated_percent
         # If Arbitrage is possible, confirm offers
-        if(calculated_percent >= MIN_PERCENT_REQUIRED):
+        if calculated_percent >= MIN_PERCENT_REQUIRED:
             logging.info(f"Arbitrage oportunity: buy:{buy['efPrice']}   sell:{sell['efPrice']}")
             playsound('beep.wav')
             #Execute orders
@@ -54,22 +70,10 @@ while True:
         end_time = dt.now()
         seconds_elapsed = (end_time - start_time).total_seconds()
         logging.debug(f"Cycle took {seconds_elapsed} seconds")
-
-        #print(f"Took {seconds_elapsed} seconds")
-        if cycle_count % 2 == 0:
-            try:
-                ticker = bsc.get_ticker()
-                amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
-            except Exception as e:
-                pass
-
         cycle_count +=1
 
-        # if spread is high, sleep, else speed up checks
-        if calculated_percent < -0.3:
-            time.sleep(sleep_time_offers)
-        else:
-            time.sleep(2)
+        updateTick(cycle_count)
+        waitForNextCycle(calculated_percent)
     except Exception as e:
         logging.error(e)
         print(e)
