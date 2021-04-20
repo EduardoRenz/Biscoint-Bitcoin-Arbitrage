@@ -23,11 +23,12 @@ percent_record = -1
 cycle_count = 1
 while True:
     start_time = dt.now()
+
     buy = bsc.get_offer(op='buy',amount=str(amount_btc_to_trade),isQuote=False)
     sell = bsc.get_offer(op='sell',amount=str(amount_btc_to_trade),isQuote=False)
 
     calculated_percent = percent(buy['efPrice'],sell['efPrice'])
-    logging.debug(f"Percent is {calculated_percent}")
+    logging.info(f"Percent is {calculated_percent} | Cycle {cycle_count}")
 
     if calculated_percent > percent_record:
         logging.info(f"Percent Record Reached!! : {calculated_percent}")
@@ -39,6 +40,9 @@ while True:
         #Execute orders
         executed_buy = bsc.confirm_offer(buy['offerId'])
         executed_sell = bsc.confirm_offer(sell['offerId'])
+        logging.success(executed_buy)
+        logging.success(executed_sell)
+
         last_balance = bsc.get_balance()
         logging.info(f"New Balance is: {last_balance}")
         break
@@ -49,8 +53,16 @@ while True:
 
     #print(f"Took {seconds_elapsed} seconds")
     if cycle_count % 2 == 0:
-        ticker = bsc.get_ticker()
-        amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])   
+        try:
+            ticker = bsc.get_ticker()
+            amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
+        except Exception as e:
+            pass
 
     cycle_count +=1
-    time.sleep(sleep_time_offers)
+
+    # if spead is high, sleep
+    if calculated_percent < -0.3:
+        time.sleep(sleep_time_offers)
+    else:
+        time.sleep(1)

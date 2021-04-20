@@ -12,6 +12,6 @@ logging.getLogger().addHandler(logging.StreamHandler()) # Habilita para printar 
 BASE_URL="https://api.biscoint.io/v1"
 AMOUNT = '0.00018'
 BRL_AMOUNT_TRADE = 55 # Amount of BRL to trade  in each transaction
-MIN_PERCENT_REQUIRED = 0.2
+MIN_PERCENT_REQUIRED = 0.1
 API_KEY = os.getenv('API_KEY') 
 API_SECRET= os.getenv('API_SECRET') 
