@@ -4,7 +4,7 @@ from biscoint_api_python import Biscoint
 from playsound import playsound
 from utils import percent,btcToTrade
 from configs import logging
-from configs import API_KEY, API_SECRET, AMOUNT, MIN_PERCENT_REQUIRED, BASE_URL, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE
+from configs import API_KEY, API_SECRET, MIN_PERCENT_REQUIRED, BASE_URL, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE
 
 # Initial configs
 bsc = Biscoint(API_KEY, API_SECRET)
@@ -38,7 +38,7 @@ def waitForNextCycle(calculated_percent):
     if calculated_percent < -0.3:
         time.sleep(sleep_time_offers)
     else:
-        time.sleep(2)
+        time.sleep(1)
         
 # Log the current cycle every n times on loop
 def showCycle(cycle_count, percent, at_every:int=20):
