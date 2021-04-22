@@ -14,7 +14,7 @@ initial_balance = last_balance = bsc.get_balance()
 # Calculate the rate limit of request to Biscoint API
 endpoints_meta = bsc.get_meta()
 rate_limit_offer = endpoints_meta['endpoints']['offer']['post']['rateLimit']
-sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxRequests"]) / 1000) * 2
+sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxRequests"]) / 1000) * 1.5
 # Convert the BRL amount of trading to BTC
 ticker = bsc.get_ticker()
 amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
@@ -57,7 +57,7 @@ while True:
         showCycle(cycle_count,calculated_percent)
         
         if calculated_percent > percent_record:
-            logging.info(f"Percent Record Reached!! : {calculated_percent}")
+            logging.info(f"Percent Record Reached!! : {calculated_percent} at {dt.now()}")
             percent_record = calculated_percent
         # If Arbitrage is possible, confirm offers
         if calculated_percent >= MIN_PERCENT_REQUIRED:
