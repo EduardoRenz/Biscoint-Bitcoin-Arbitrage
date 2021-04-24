@@ -35,7 +35,7 @@ def updateTick(cycle_count):
 
 # if spread is high, sleep, else speed up checks
 def waitForNextCycle(calculated_percent):
-    if calculated_percent < -0.3:
+    if calculated_percent < -0.1:
         time.sleep(sleep_time_offers)
     else:
         time.sleep(1)
@@ -63,9 +63,16 @@ while True:
         if calculated_percent >= MIN_PERCENT_REQUIRED:
             logging.info(f"Arbitrage oportunity: buy:{buy['efPrice']}   sell:{sell['efPrice']}")
             playsound('beep.wav')
+            
             #Execute orders
-            executed_buy = bsc.confirm_offer(buy['offerId'])
-            executed_sell = bsc.confirm_offer(sell['offerId'])
+            if float(last_balance['BRL']) < float(55):
+                executed_sell = bsc.confirm_offer(sell['offerId'])
+                executed_buy = bsc.confirm_offer(buy['offerId'])
+            else:
+                executed_buy = bsc.confirm_offer(buy['offerId'])
+                executed_sell = bsc.confirm_offer(sell['offerId'])
+
+
             logging.info(executed_buy)
             logging.info(executed_sell)
 
