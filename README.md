@@ -25,8 +25,7 @@ The goal of this project is winning money through arbitrage, selling ang buying 
 1. Create a .env file with the same variables of .env.example
 2. Generate your API key and secret on [Biscoint](https://biscoint.io/)
 3. Put your API key and secret in environment variables inside .env file in indicated variables.
-4. Ensure that you have all the python libraries insalled found in requirements.txt
-5. Run `python main.py`
+4. Run `python main.py`
 
 ## Configurations
 
