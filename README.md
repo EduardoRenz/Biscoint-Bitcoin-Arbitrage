@@ -1,5 +1,5 @@
 # Biscoint-Bitcoin-Arbitrage
-An Arbitragem python algorithim to buy and sell Bitocin on Biscoint exchange.
+An Arbitrage python algorithim to buy and sell Bitocin on Biscoint exchange.
 
 
 | WARNING: This can be a risky and you can lose your money! Run by your own risk! |
