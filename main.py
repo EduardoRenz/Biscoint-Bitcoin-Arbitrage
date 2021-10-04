@@ -2,7 +2,7 @@ import time
 from datetime import datetime as dt
 from biscoint_api_python import Biscoint
 from playsound import playsound
-from utils import percent,btcToTrade
+from utils import percent,btcToTrade, showCycle
 from configs import logging
 from configs import API_KEY, API_SECRET, MIN_PERCENT_REQUIRED, BASE_URL, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE
 
@@ -17,19 +17,22 @@ rate_limit_offer = endpoints_meta['endpoints']['offer']['post']['rateLimit']
 sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxRequests"]) / 1000) * 1.5
 # Convert the BRL amount of trading to BTC
 ticker = bsc.get_ticker()
+
 amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
 
 percent_record = -1 # Will refresh every time when a new positive spread is achived
 
-logging.info(f"Initial balance: {initial_balance}",)
+logging.info(f"Initial balance: {initial_balance}")
 # Arbitrage Cycle
 cycle_count = 1
 
 def updateTick(cycle_count):
+    global ticker
+    global amount_btc_to_trade
     if cycle_count % UPDATE_TICK_RATE == 0:
         try:
             ticker = bsc.get_ticker()
-            amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
+            amount_btc_to_trade =  btcToTrade(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
         except Exception as e:
             logging.error(f"Error on updating tick {e}")
 
@@ -39,11 +42,6 @@ def waitForNextCycle(calculated_percent):
         time.sleep(sleep_time_offers)
     else:
         time.sleep(1)
-        
-# Log the current cycle every n times on loop
-def showCycle(cycle_count, percent, at_every:int=20):
-    if cycle_count % at_every == 0:
-        logging.info(f"Cycle {cycle_count} | Last percent : {percent} |")
 
 while True:
     try:
