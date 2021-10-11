@@ -17,5 +17,6 @@ class BaseRobot():
         return None
 
     def confirm_offer(self, executed):
+        self.logger.info(f'Order Executed')
         self.logger.info(executed)
         return None
