@@ -10,7 +10,7 @@ class WebRobot(BiscointRobot):
 
     def __genOfferParams(self, base: str, quote: str, op: str, amount: str, is_quote: bool):
         params = {"base": base, "quote": quote, "op": op,
-                  "amount": "0.0001", "isQuote": is_quote, "requestId": self._generateRandomId()}
+                  "amount": amount, "isQuote": is_quote, "requestId": self._generateRandomId()}
         return params
 
     def get_offer(self, op: str, amount: str, is_quote: bool, base='BTC', quote='BRL'):

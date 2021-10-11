@@ -6,7 +6,7 @@ class BiscointRobot(BaseRobot):
         super().__init__()
         self.api = biscoint_api
 
-    def get_offer(self, op: str, amount: float, is_quote: bool, base='BTC', quote='BRL'):
+    def get_offer(self, op: str, amount: str, is_quote: bool, base='BTC', quote='BRL'):
         return self.api.get_offer(op=op, amount=amount, isQuote=is_quote, base=base, quote=quote)
 
     def confirm_offer(self, offer_id: str):
