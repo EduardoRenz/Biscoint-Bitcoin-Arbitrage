@@ -42,13 +42,13 @@ def percent(value1, value2): return round(
 def can_buy(brl, min_brl=10): return float(brl) >= float(
     min_brl)  # verify if you have enough money
 
-
-def btcToTrade(max_brl, quote_amount, base_amount): return (
+# Converts BRL aomunt to base amount
+def amountToBase(max_brl, quote_amount, base_amount): return (
     max_brl * base_amount) / quote_amount  # calculate min value of btc to trade from brl
 
 
 # Log the current cycle every n times on loop
-def showCycle(cycle_count, percent, at_every: int = 20):
+def showCycle(cycle_count, percent, at_every: int = 100):
     if cycle_count % at_every == 0:
         logging.info(f"Cycle {cycle_count} | Last percent : {percent} |")
 

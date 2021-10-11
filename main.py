@@ -2,10 +2,15 @@ import time
 from datetime import datetime as dt
 from biscoint_api_python import Biscoint
 from playsound import playsound
-from utils import percent, btcToTrade, showCycle
+from utils import percent, amountToBase, showCycle
 from configs import logging
 from configs import API_KEY, API_SECRET, MIN_PERCENT_REQUIRED, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE
 from classes.Robots import BiscointRobot
+import argparse
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--base','-b', default='BTC',  type=str, choices=['BTC','ETH'], help='crypto to trade')
+
+base =  parser.parse_args().base
 
 # Initial configs
 bsc = Biscoint(API_KEY, API_SECRET)
@@ -18,9 +23,9 @@ endpoints_meta = bsc.get_meta()
 rate_limit_offer = endpoints_meta['endpoints']['offer']['post']['rateLimit']
 sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxRequests"]) / 1000) * 1.5
 # Convert the BRL amount of trading to BTC
-ticker = bsc.get_ticker()
+ticker = bsc.get_ticker(base=base)
 
-amount_btc_to_trade = btcToTrade(BRL_AMOUNT_TRADE, ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
+amount_to_trade = amountToBase(BRL_AMOUNT_TRADE, ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
 
 percent_record = -1  # Will refresh every time when a new positive spread is achived
 
@@ -31,12 +36,11 @@ cycle_count = 1
 
 def updateTick(cycle_count):
     global ticker
-    global amount_btc_to_trade
+    global amount_to_trade
     if cycle_count % UPDATE_TICK_RATE == 0:
         try:
             ticker = bsc.get_ticker()
-            amount_btc_to_trade = btcToTrade(
-                BRL_AMOUNT_TRADE, ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
+            amount_to_trade = amountToBase( BRL_AMOUNT_TRADE, ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
         except Exception as e:
             logging.error(f"Error on updating tick {e}")
 
@@ -54,8 +58,8 @@ while True:
     try:
         start_time = dt.now()
         # Get buy and sell offers of this cycle
-        buy = robot.get_offer(op='buy', amount=str(amount_btc_to_trade), is_quote=False)
-        sell = robot.get_offer(op='sell', amount=str(amount_btc_to_trade), is_quote=False)
+        buy = robot.get_offer(op='buy', base=base, amount=str(amount_to_trade), is_quote=False)
+        sell = robot.get_offer(op='sell',base=base, amount=str(amount_to_trade), is_quote=False)
         # Calculate if arbitrage is possible
         calculated_percent = percent(buy['efPrice'], sell['efPrice'])
 
