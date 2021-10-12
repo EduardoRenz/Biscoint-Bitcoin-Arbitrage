@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--base','-b', default='BTC',  type=str, choices=['BTC','ETH'], help='crypto to trade')
 
 base =  parser.parse_args().base
+logging.info(f"Starting arbitrage of {base}")
 
 # Initial configs
 bsc = Biscoint(API_KEY, API_SECRET)

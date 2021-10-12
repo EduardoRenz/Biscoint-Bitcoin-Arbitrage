@@ -9,8 +9,8 @@ class WebRobot(BiscointRobot):
         self.driver = web_driver
 
     def __genOfferParams(self, base: str, quote: str, op: str, amount: str, is_quote: bool):
-        params = {"base": base, "quote": quote, "op": op,
-                  "amount": amount, "isQuote": is_quote, "requestId": self._generateRandomId()}
+        params = {"base": base, "quote": quote, "op": op, "amount": amount, "isQuote":
+                 is_quote, "requestId": self._generateRandomId()}
         return params
 
     def get_offer(self, op: str, amount: str, is_quote: bool, base='BTC', quote='BRL'):
@@ -25,6 +25,5 @@ class WebRobot(BiscointRobot):
 
     def confirm_offer(self, offer_id):
         offer_param = {'offerId': offer_id}
-        executed = self.driver.execute_script(
-            f"Meteor.call('ops.confirmOffer','{json.dumps(offer_param)}')")
+        executed = self.driver.execute_script(f"Meteor.call('ops.confirmOffer','{json.dumps(offer_param)}')")
         self.logger.info(executed)
