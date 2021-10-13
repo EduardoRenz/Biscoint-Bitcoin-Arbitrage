@@ -2,9 +2,8 @@ from selenium import webdriver
 import time
 import threading
 from utils import amountToBase, showCycle, percent
-from configs import logging, API_KEY, API_SECRET, MIN_PERCENT_REQUIRED, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE, LOGIN_TOKEN
+from configs import logging, MIN_PERCENT_REQUIRED, BRL_AMOUNT_TRADE, UPDATE_TICK_RATE, LOGIN_TOKEN
 from datetime import datetime as dt
-from biscoint_api_python import Biscoint
 from playsound import playsound
 from classes.Robots import WebRobot, BiscointRobot
 import argparse
@@ -13,7 +12,7 @@ parser.add_argument('--base','-b', default='BTC',  type=str, choices=['BTC','ETH
 
 base =  parser.parse_args().base
 logging.info(f"Starting arbitrage of {base}")
-# Initial configs
+
 # Selenium
 options = webdriver.FirefoxOptions()
 options.add_argument('--headless')
@@ -23,12 +22,9 @@ driver.get("https://biscoint.io")
 driver.execute_script(f"window.localStorage.setItem('Meteor.loginToken','{LOGIN_TOKEN}');")
 driver.get("https://biscoint.io/dashboard/portfolio")
 
-#Biscoint api 
-bsc = Biscoint(API_KEY, API_SECRET)
-
 # Web Robot
-web_robot = WebRobot(bsc, driver)
-biscoint_robot = BiscointRobot(bsc)
+web_robot = WebRobot(driver)
+biscoint_robot = BiscointRobot()
 
 
 # %%
@@ -37,7 +33,7 @@ def updateTick(cycle_count):
     global amount_btc_to_trade
     if cycle_count % UPDATE_TICK_RATE == 0:
         try:
-            ticker = bsc.get_ticker(base=base)
+            ticker = web_robot.api.get_ticker(base=base)
             amount_btc_to_trade =  amountToBase(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
         except Exception as e:
             logging.error(f"Error on updating tick {e}")
@@ -62,13 +58,13 @@ def async_offer(robot, op:str,amount:str,isQuote:bool,base:str):
 
 # %%
 #Return initial balance from Biscoint
-initial_balance = last_balance = bsc.get_balance()
+initial_balance = last_balance = web_robot.api.get_balance()
 # Calculate the rate limit of request to Biscoint API
-endpoints_meta = bsc.get_meta()
+endpoints_meta = web_robot.api.get_meta()
 rate_limit_offer = endpoints_meta['endpoints']['offer']['post']['rateLimit']
 sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxRequests"]) / 1000) * 1.5
 # Convert the BRL amount of trading to BTC
-ticker = bsc.get_ticker(base=base)
+ticker = web_robot.api.get_ticker(base=base)
 
 amount_btc_to_trade = amountToBase(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
 
@@ -119,7 +115,7 @@ while True:
                 executed_buy = web_robot.confirm_offer(buy['offerId'])
                 executed_sell = web_robot.confirm_offer(sell['offerId'])
 
-            last_balance = bsc.get_balance()
+            last_balance = web_robot.api.get_balance()
             logging.info(f"New Balance is: {last_balance}")
 
             break

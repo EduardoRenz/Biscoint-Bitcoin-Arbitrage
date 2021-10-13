@@ -1,11 +1,14 @@
 import json
-from classes.BaseRobot import BaseRobot
 from classes.BiscointRobot import BiscointRobot
 
 
 class WebRobot(BiscointRobot):
-    def __init__(self, biscoint_api, web_driver):
-        super().__init__(biscoint_api)
+    def __init__(self, web_driver,api=None):
+        if api != None:
+            super().__init__(api)
+        else:
+            super().__init__()
+            
         self.driver = web_driver
 
     def __genOfferParams(self, base: str, quote: str, op: str, amount: str, is_quote: bool):
