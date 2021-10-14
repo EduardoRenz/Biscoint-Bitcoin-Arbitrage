@@ -28,5 +28,5 @@ class WebRobot(BiscointRobot):
 
     def confirm_offer(self, offer_id):
         offer_param = {'offerId': offer_id}
-        executed = self.driver.execute_script(f"return Meteor.callAsync('ops.confirmOffer','{json.dumps(offer_param)}')")
+        executed = self.driver.execute_script(f"return Meteor.callAsync('ops.confirmOffer',{json.dumps(offer_param)})")
         self.logger.info(executed)
