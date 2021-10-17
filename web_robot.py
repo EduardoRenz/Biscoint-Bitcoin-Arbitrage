@@ -30,11 +30,11 @@ biscoint_robot = BiscointRobot()
 # %%
 def updateTick(cycle_count):
     global ticker
-    global amount_btc_to_trade
+    global amount_base_to_trade
     if cycle_count % UPDATE_TICK_RATE == 0:
         try:
             ticker = web_robot.api.get_ticker(base=base)
-            amount_btc_to_trade =  amountToBase(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
+            amount_base_to_trade =  amountToBase(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'],ticker['bidBaseAmountRef'])
         except Exception as e:
             logging.error(f"Error on updating tick {e}")
 
@@ -66,7 +66,7 @@ sleep_time_offers = ((rate_limit_offer["windowMs"] / rate_limit_offer["maxReques
 # Convert the BRL amount of trading to BTC
 ticker = web_robot.api.get_ticker(base=base)
 
-amount_btc_to_trade = amountToBase(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
+amount_base_to_trade = amountToBase(BRL_AMOUNT_TRADE,ticker['askQuoteAmountRef'], ticker['bidBaseAmountRef'])
 
 percent_record = -1 # Will refresh every time when a new positive spread is achived
 
@@ -83,8 +83,8 @@ while True:
 
         # Get Offers in thread
         request_orders = {}
-        thread_buy = threading.Thread(target=async_offer, args=(web_robot, 'buy',str(amount_btc_to_trade), False, base))
-        thread_sell = threading.Thread(target=async_offer, args=(biscoint_robot,'sell',str(amount_btc_to_trade), False, base))
+        thread_buy = threading.Thread(target=async_offer, args=(web_robot, 'buy',str(amount_base_to_trade), False, base))
+        thread_sell = threading.Thread(target=async_offer, args=(biscoint_robot,'sell',str(amount_base_to_trade), False, base))
         thread_buy.start()
         thread_sell.start()
         thread_buy.join()
