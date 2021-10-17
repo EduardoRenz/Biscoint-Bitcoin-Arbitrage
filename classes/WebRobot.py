@@ -27,6 +27,8 @@ class WebRobot(BiscointRobot):
             self.logger.error(f"Erro ao rodar get_offer {e}")
 
     def confirm_offer(self, offer_id):
-        offer_param = {'offerId': offer_id}
-        executed = self.driver.execute_script(f"return Meteor.callAsync('ops.confirmOffer',{json.dumps(offer_param)})")
+        offer_param = {'offerId': offer_id,  "checkIntentionLimit":True}
+        finalOffer = self.driver.execute_script(f"return Meteor.callAsync('ops.getFinalOffer',{json.dumps(offer_param)})")
+        final_offer_param = {'offerId': finalOffer['offerId']}
+        executed = self.driver.execute_script(f"return Meteor.callAsync('ops.confirmOffer',{json.dumps(final_offer_param)})")
         self.logger.info(executed)
