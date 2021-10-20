@@ -117,9 +117,7 @@ while True:
 
             last_balance = web_robot.api.get_balance()
             logging.info(f"New Balance is: {last_balance}")
-
-            break
-            
+         
 
         end_time = dt.now()
         seconds_elapsed = (end_time - start_time).total_seconds()
