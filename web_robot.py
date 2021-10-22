@@ -83,8 +83,8 @@ while True:
 
         # Get Offers in thread
         request_orders = {}
-        thread_buy = threading.Thread(target=async_offer, args=(web_robot, 'buy',str(amount_base_to_trade), False, base))
-        thread_sell = threading.Thread(target=async_offer, args=(biscoint_robot,'sell',str(amount_base_to_trade), False, base))
+        thread_buy = threading.Thread(target=async_offer, args=(web_robot, 'buy',str(BRL_AMOUNT_TRADE), True, base))
+        thread_sell = threading.Thread(target=async_offer, args=(biscoint_robot,'sell',str(BRL_AMOUNT_TRADE), True, base))
         thread_buy.start()
         thread_sell.start()
         thread_buy.join()
@@ -104,7 +104,7 @@ while True:
             percent_record = calculated_percent
         # If Arbitrage is possible, confirm offers
         if calculated_percent >= MIN_PERCENT_REQUIRED:
-            logging.info(f"Arbitrage oportunity: buy:{buy['efPrice']}   sell:{sell['efPrice']}")
+            logging.info(f"Arbitrage oportunity: buy:{buy['efPrice']}   sell:{sell['efPrice']} ({calculated_percent})")
             playsound('beep.wav')
             
             #Execute orders
@@ -116,7 +116,7 @@ while True:
                 executed_sell = web_robot.confirm_offer(sell['offerId'])
 
             last_balance = web_robot.api.get_balance()
-            logging.info(f"New Balance is: {last_balance}")
+            logging.info(f"New Balance is: {last_balance} (Won {BRL_AMOUNT_TRADE * (calculated_percent/100)} )  ")
          
 
         end_time = dt.now()
